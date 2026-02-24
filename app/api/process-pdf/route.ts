@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         id: chunksWithPages[idx].id,
         document_id: document.id,
         chunk_index: chunksWithPages[idx].chunkIndex,
-        page: chunksWithPages[idx].page,
+        page_number: chunksWithPages[idx].page,
         content: e.content,
         embedding: e.embedding,
         char_start: chunksWithPages[idx].charStart,

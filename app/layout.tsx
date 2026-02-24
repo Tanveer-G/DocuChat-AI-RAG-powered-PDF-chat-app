@@ -1,24 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "@/components/ui/sonner";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
+  metadataBase: new URL("https://tanveer-docuchat-ai.vercel.app"),
   title: "DocuChat AI | RAG-Powered PDF Chat Application | Tanveer H.",
   description:
     "DocuChat AI is a Retrieval-Augmented Generation (RAG) powered PDF chat application that enables semantic document search, streaming AI responses, and page-level source citations using Next.js, Supabase pgvector, and OpenRouter.",
 
+  // You may trim keywords if desired, but they're fine as is.
   keywords: [
     "Tanveer",
     "Tanveer AI Developer",
@@ -74,7 +65,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`antialiased`}
       >
         {children}
         <Toaster />

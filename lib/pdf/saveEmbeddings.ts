@@ -1,39 +1,10 @@
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
-// export async function saveEmbeddings(data: {
-//   content: string
-//   embedding: number[]
-// }[]) {
-//   await prisma.documentChunk.createMany({
-//     data: data.map(item => ({
-//       content: item.content,
-//       embedding: item.embedding,
-//     })),
-//   })
-// }
-
-// export async function saveEmbeddings(
-//   embeddings: { content: string; embedding: number[] }[],
-//   documentId: string,
-//   pageNumbers: number[] // assuming same order as embeddings
-// ) {
-//   const rows = embeddings.map((item, idx) => ({
-//     document_id: documentId,
-//     content: item.content,
-//     embedding: item.embedding,
-//     page_number: pageNumbers[idx],
-//   }));
-
-//   const { error } = await supabaseAdmin.from('pdf_chunks').insert(rows);
-//   if (error) throw error;
-// }
-
-
 export type EmbeddingSaveRow = {
   id: string; // uuid
   document_id: string;
   chunk_index: number;
-  page: number;
+  page_number: number;
   content: string;
   embedding: number[]; // vector array for pgvector
   char_start?: number;

@@ -36,7 +36,7 @@ const openrouter = createOpenRouter({
 });
 
 // Configurable thresholds (documented)
-const MIN_SIMILARITY = Number.parseFloat(process.env.MIN_SIMILARITY ?? "0.42");
+const MIN_SIMILARITY = Number.parseFloat(process.env.MIN_SIMILARITY ?? "0.35");
 const MATCH_COUNT = Number.parseInt(process.env.MATCH_COUNT ?? "8", 10);
 const MATCH_THRESHOLD = Number.parseFloat(
   process.env.MATCH_THRESHOLD ?? "0.25",

@@ -132,7 +132,7 @@ export default function ChatInterface({ sessionId, onReset }: Readonly<ChatInter
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [...messages, userMessage].map(({ role, content }) => ({ role, content })),
-          sessionId: '79f6686d-5d23-4868-87b4-383ba73b7f27',
+          sessionId,
           role: selectedRole,
         }),
       });
