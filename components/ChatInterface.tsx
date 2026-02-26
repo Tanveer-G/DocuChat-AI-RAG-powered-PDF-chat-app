@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send, RefreshCw, FileText, Copy, Check, ChevronDown } from "lucide-react";
+import { Send, FileText, Copy, Check,  } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { RoleSelector } from "./RoleSelector";
 import { Role } from "@/lib/buildSystemPrompt";
@@ -40,7 +40,6 @@ interface Message {
 
 interface ChatInterfaceProps {
   sessionId: string;
-  onReset: () => void;
 }
 
 // ==================== Helper: Stream Header Parsing ====================
@@ -74,7 +73,7 @@ async function readInitialHeader(
 
 // ==================== Main Component ====================
 
-export default function ChatInterface({ sessionId, onReset }: Readonly<ChatInterfaceProps>) {
+export default function ChatInterface({ sessionId }: Readonly<ChatInterfaceProps>) {
   const [selectedRole, setSelectedRole] = useState<Role>("strict_qa");
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -245,219 +244,196 @@ export default function ChatInterface({ sessionId, onReset }: Readonly<ChatInter
   };
 
   // ==================== Render ====================
-  return (
-    <Card className="w-full h-[80vh] flex flex-col">
-      {/* Responsive Header */}
-      <CardHeader className="space-y-2 pb-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <CardTitle className="text-center sm:text-left">Chat with your PDF</CardTitle>
-          <div className="flex flex-col sm:flex-row items-center gap-2">
-            <RoleSelector
-              value={selectedRole}
-              onChange={setSelectedRole}
-              disabled={isLoading}
-            />
-            <Button variant="outline" size="sm" onClick={onReset} className="w-full sm:w-auto">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              New PDF
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
+return (
+  <Card className="w-full h-full flex flex-col border-0 sm:border rounded-none sm:rounded-xl">
+    
+    {/* ================= HEADER ================= */}
+    <CardHeader className="pb-3 px-4 sm:px-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <CardTitle className="text-base sm:text-lg font-semibold tracking-tight">
+          Chat with your PDF
+        </CardTitle>
 
-      <CardContent className="flex-1 overflow-hidden">
-        <ScrollArea className="h-full pr-4">
-          {messages.length === 0 ? (
-            <div className="text-center text-muted-foreground py-8">
-              Ask a question about your PDF, e.g.{" "}
-              <span className="italic">{`"What is the main topic?"`}</span>
+        <RoleSelector
+          value={selectedRole}
+          onChange={setSelectedRole}
+          disabled={isLoading}
+        />
+      </div>
+    </CardHeader>
+
+    {/* ================= MESSAGES ================= */}
+    <CardContent className="flex-1 overflow-hidden px-3 sm:px-6">
+      <ScrollArea className="h-full pr-2 sm:pr-4">
+        {messages.length === 0 ? (
+          <div className="flex h-full items-center justify-center text-center px-4">
+            <div className="max-w-sm space-y-2">
+              <p className="text-sm sm:text-base text-muted-foreground">
+                Ask a question about your PDF
+              </p>
+              <p className="text-xs sm:text-sm text-muted-foreground italic">
+                “What is the main topic?”
+              </p>
             </div>
-          ) : (
-            <div className="space-y-4">
-              {messages.map((msg) => {
-                const isUser = msg.role === "user";
-                const isAssistant = !isUser;
-                const meta = msg.meta;
-                const sources = meta?.sources || [];
-                const topSimilarity = meta?.topSimilarity;
-                const showLowSimilarity =
-                  topSimilarity !== undefined && topSimilarity < 0.42;
+          </div>
+        ) : (
+          <div className="space-y-5 py-2">
+            {messages.map((msg) => {
+              const isUser = msg.role === "user";
+              const isAssistant = !isUser;
+              const meta = msg.meta;
+              const sources = meta?.sources || [];
+              const topSimilarity = meta?.topSimilarity;
+              const showLowSimilarity =
+                topSimilarity !== undefined && topSimilarity < 0.42;
 
-                return (
+              return (
+                <div
+                  key={msg.id}
+                  className={`flex ${isUser ? "justify-end" : "justify-start"}`}
+                >
                   <div
-                    key={msg.id}
-                    className={`flex ${isUser ? "justify-end" : "justify-start"}`}
+                    className={`flex gap-2 sm:gap-3 max-w-[95%] sm:max-w-[85%] ${
+                      isUser ? "flex-row-reverse" : "flex-row"
+                    }`}
                   >
-                    <div
-                      className={`flex gap-2 sm:gap-3 max-w-[90%] sm:max-w-[85%] ${
-                        isUser ? "flex-row-reverse" : "flex-row"
-                      }`}
-                    >
-                      <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-                        <AvatarFallback className="text-xs sm:text-sm">
-                          {isUser ? "U" : "AI"}
-                        </AvatarFallback>
-                      </Avatar>
+                    <Avatar className="h-8 w-8 sm:h-9 sm:w-9 shrink-0">
+                      <AvatarFallback className="text-xs font-medium">
+                        {isUser ? "U" : "AI"}
+                      </AvatarFallback>
+                    </Avatar>
 
-                      <div className="flex flex-col flex-1">
-                        {/* Message Bubble */}
+                    <div className="flex flex-col flex-1 min-w-0">
+                      
+                      {/* ===== MESSAGE BUBBLE ===== */}
+                      <div
+                        className={`rounded-xl px-4 py-3 shadow-sm ${
+                          isUser
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted"
+                        }`}
+                      >
                         <div
-                          className={`rounded-lg p-3 ${
-                            isUser
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted"
-                          }`}
+                          className="whitespace-pre-wrap break-words text-sm sm:text-base leading-relaxed"
+                          aria-live={isAssistant && !msg.finished ? "polite" : undefined}
                         >
-                          <div className="whitespace-pre-wrap wrap-break-word text-sm sm:text-base">
-                            {msg.content}
-                            {/* Typing indicator for streaming assistant */}
-                            {isAssistant && !msg.finished && (
-                              <span className="ml-1 animate-pulse">▌</span>
-                            )}
-                          </div>
-
-                          {/* Copy button (for assistant messages) */}
-                          {isAssistant && msg.content && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="cursor-pointer h-6 px-2 mt-1 text-xs"
-                              onClick={() => copyToClipboard(msg.content, msg.id)}
-                            >
-                              {copiedId === msg.id ? (
-                                <Check className="h-3 w-3 mr-1" />
-                              ) : (
-                                <Copy className="h-3 w-3 mr-1" />
-                              )}
-                              {copiedId === msg.id ? "Copied!" : "Copy"}
-                            </Button>
+                          {msg.content}
+                          {isAssistant && !msg.finished && (
+                            <span className="ml-1 animate-pulse">▌</span>
                           )}
                         </div>
 
-                        {/* Sources Panel (only for assistant) */}
-                        {isAssistant && msg.finished && (sources.length > 0 || meta?.answer === "INSUFFICIENT_CONTEXT") && (
-                          <div
-                            className={`mt-3 text-sm border rounded-lg p-3 transition-all ${
-                              msg.finished
-                                ? "bg-muted/40 shadow-sm border-primary/20"
-                                : "bg-muted/30"
-                            }`}
+                        {isAssistant && msg.content && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 px-2 mt-2 text-xs focus-visible:ring-2 focus-visible:ring-primary"
+                            onClick={() => copyToClipboard(msg.content, msg.id)}
                           >
-                            {/* Header with top similarity and warning */}
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                            {copiedId === msg.id ? (
+                              <Check className="h-3 w-3 mr-1" />
+                            ) : (
+                              <Copy className="h-3 w-3 mr-1" />
+                            )}
+                            {copiedId === msg.id ? "Copied" : "Copy"}
+                          </Button>
+                        )}
+                      </div>
+
+                      {/* ===== SOURCES PANEL ===== */}
+                      {isAssistant &&
+                        msg.finished &&
+                        (sources.length > 0 ||
+                          meta?.answer === "INSUFFICIENT_CONTEXT") && (
+                          <div className="mt-3 text-xs sm:text-sm border rounded-lg p-3 bg-muted/30">
+                            
+                            <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                              <div className="flex items-center gap-2 font-medium text-muted-foreground">
                                 <FileText className="h-4 w-4" />
-                                <span>Sources</span>
+                                Sources
                               </div>
-                              <div className="flex flex-wrap items-center gap-2">
+
+                              <div className="flex flex-wrap gap-2">
                                 {topSimilarity !== undefined && (
-                                  <span className="text-xs bg-background px-2 py-1 rounded whitespace-nowrap">
-                                    Top: {(topSimilarity * 100).toFixed(1)}%
+                                  <span className="bg-background px-2 py-1 rounded text-xs">
+                                    Top {(topSimilarity * 100).toFixed(1)}%
                                   </span>
                                 )}
+
                                 {showLowSimilarity && (
-                                  <span className="text-xs text-amber-600 bg-amber-50 px-2 py-1 rounded">
-                                    ⚠️ Low confidence
+                                  <span className="text-amber-700 bg-amber-100 px-2 py-1 rounded text-xs">
+                                    Low confidence
                                   </span>
-                                )}
-                                {meta?.answer === "INSUFFICIENT_CONTEXT" && (
-                                  <>
-                                    <span className="text-xs text-destructive">
-                                      {meta.reason || "Insufficient context"}
-                                    </span>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="h-7 text-xs"
-                                      onClick={() => {
-                                        const lastUser = [...messages]
-                                          .reverse()
-                                          .find(m => m.role === "user");
-                                        if (lastUser) handleAskAnyway(lastUser);
-                                      }}
-                                    >
-                                      Answer anyway
-                                    </Button>
-                                  </>
                                 )}
                               </div>
                             </div>
 
-                            {/* Source list */}
                             {sources.length === 0 ? (
-                              <div className="text-xs text-muted-foreground">
+                              <p className="text-muted-foreground text-xs">
                                 No relevant sources found.
-                              </div>
+                              </p>
                             ) : (
                               <div className="space-y-2">
                                 {sources.map((src, idx) => (
                                   <details
-                                    key={`src`+idx}
-                                    className="text-xs bg-background/50 rounded border p-2 group"
+                                    key={idx}
+                                    className="bg-background/50 rounded border p-2"
                                   >
-                                    <summary className="cursor-pointer text-foreground/80 hover:text-foreground flex items-center justify-between">
-                                      <span>
-                                        <span className="font-medium">Page {src.page}</span>
-                                        <span className="ml-2 text-muted-foreground">
-                                          • {(src.similarity * 100).toFixed(1)}%
-                                        </span>
-                                      </span>
-                                      <ChevronDown className="h-3 w-3 transition-transform group-open:rotate-180" />
+                                    <summary className="cursor-pointer text-xs sm:text-sm font-medium">
+                                      Page {src.page} •{" "}
+                                      {(src.similarity * 100).toFixed(1)}%
                                     </summary>
-                                    <div className="mt-2 text-muted-foreground text-xs italic border-l-2 pl-2 overflow-hidden">
+                                    <p className="mt-2 text-xs italic text-muted-foreground break-words">
                                       {src.excerpt}
-                                    </div>
+                                    </p>
                                   </details>
                                 ))}
                               </div>
                             )}
                           </div>
                         )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Thinking indicator (before any assistant message appears) */}
-              {isLoading && messages.length > 0 && messages.at(-1)?.role !== "assistant" && (
-                <div className="flex justify-start">
-                  <div className="flex gap-3">
-                    <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
-                      <AvatarFallback>AI</AvatarFallback>
-                    </Avatar>
-                    <div className="bg-muted rounded-lg p-3 flex items-center gap-1">
-                      <span className="animate-pulse text-sm">● ● ●</span>
                     </div>
                   </div>
                 </div>
-              )}
+              );
+            })}
 
-              {error && (
-                <div className="text-destructive text-center p-2 text-sm sm:text-base">
-                  Error: {error}
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
-          )}
-        </ScrollArea>
-      </CardContent>
+            {error && (
+              <div className="text-destructive text-center text-sm">
+                {error}
+              </div>
+            )}
 
-      <CardFooter className="border-t pt-4">
-        <form onSubmit={handleSubmit} className="flex w-full gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your question..."
-            disabled={isLoading}
-            className="flex-1 text-sm sm:text-base"
-          />
-          <Button type="submit" disabled={isLoading || !input.trim()} size="sm" className="sm:size-default">
-            <Send className="h-4 w-4" />
-          </Button>
-        </form>
-      </CardFooter>
-    </Card>
-  );
+            <div ref={messagesEndRef} />
+          </div>
+        )}
+      </ScrollArea>
+    </CardContent>
+
+    {/* ================= INPUT ================= */}
+    <CardFooter className="border-t px-3 sm:px-6 py-3">
+      <form
+        onSubmit={handleSubmit}
+        className="flex w-full items-center gap-2"
+      >
+        <Input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type your question here..."
+          disabled={isLoading}
+          className="flex-1 text-base"
+        />
+
+        <Button
+          type="submit"
+          disabled={isLoading || !input.trim()}
+          size="icon"
+          className="shrink-0"
+        >
+          <Send className="h-4 w-4" />
+        </Button>
+      </form>
+    </CardFooter>
+  </Card>
+);
 }

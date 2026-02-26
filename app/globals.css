@@ -126,6 +126,9 @@
     @apply bg-background text-foreground;
   }
 }
+button, a {
+  cursor: pointer;
+}
 
 @keyframes slideInFromTop {
   from {
