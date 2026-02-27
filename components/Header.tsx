@@ -2,8 +2,6 @@ import SocialLinks from "@/components/SocialLinks";
 
 export default function Header() {
   return (
-    // inside your Header render
-
     <header className="border-b bg-card">
       <div className="flex items-center justify-between px-4 py-3 md:px-6">
         <h1 className="text-lg sm:text-xl md:text-2xl font-semibold">
@@ -15,9 +13,10 @@ export default function Header() {
           {/* On mobile show compact icons only */}
           <div className="block md:hidden">
             <SocialLinks
-              githubUrl="https://github.com/Tanveer-G/DocuChat-AI-RAG-powered-PDF-chat-app?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo&utm_content=mobile"
-              portfolioUrl="https://tanveer-portfolio.vercel.app/en-Us/?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo&utm_content=mobile"
-              contactUrl="https://tanveer-portfolio.vercel.app/en-Us/contact?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo&utm_content=mobile"
+              githubUrl="https://github.com/Tanveer-G/DocuChat-AI-RAG-powered-PDF-chat-app?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo"
+              linkedinUrl="https://www.linkedin.com/in/tanveer-h1/?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo"
+              portfolioUrl="https://tanveer-portfolio.vercel.app/en-Us/work/?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo"
+              contactUrl="https://tanveer-portfolio.vercel.app/en-Us/contact?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo"
               compact
             />
           </div>
@@ -26,8 +25,9 @@ export default function Header() {
           <div className="hidden md:block">
             <SocialLinks
               githubUrl="https://github.com/Tanveer-G/DocuChat-AI-RAG-powered-PDF-chat-app?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo&utm_content=mobile"
-              portfolioUrl="https://tanveer-portfolio.vercel.app/en-Us/?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo&utm_content=mobile"
+              portfolioUrl="https://tanveer-portfolio.vercel.app/en-Us/work/?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo&utm_content=mobile"
               contactUrl="https://tanveer-portfolio.vercel.app/en-Us/contact?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo&utm_content=mobile"
+              linkedinUrl="https://www.linkedin.com/in/tanveer-h1/?utm_source=docuchat_app&utm_medium=header&utm_campaign=self_promo"
               compact
             />
           </div>

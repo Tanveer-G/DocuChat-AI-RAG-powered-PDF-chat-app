@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import trackEvent from "@/lib/analytics/analyzr"; // default import
 
 interface LeftPanelProps {
   onSelectPdf: (sessionId: string) => void;
@@ -34,7 +35,7 @@ interface StoredPdf {
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ACCEPTED_FILE_TYPES = { "application/pdf": [".pdf"] };
-const SAMPLE_SESSION_ID = "6df0fe31-f01d-4c12-8452-3ee406eb50ee";
+const SAMPLE_SESSION_ID = process.env.NEXT_PUBLIC_SAMPLE_SESSION_ID!;
 const RECENT_KEY = "recentPdfs";
 const MAX_RECENTS = 5;
 
@@ -61,7 +62,6 @@ export default function LeftPanel({
       }
     } catch (err) {
       console.warn("Could not read recent PDFs from localStorage", err);
-      // don't crash; start empty
     }
   }, []);
 
@@ -98,6 +98,15 @@ export default function LeftPanel({
         return;
       }
 
+      // Track upload start
+      trackEvent({
+        name: "upload_started",
+        properties: {
+          fileName: file.name,
+          fileSize: file.size,
+        },
+      });
+
       onProcessingStart();
 
       const formData = new FormData();
@@ -126,6 +135,16 @@ export default function LeftPanel({
           description: "PDF processed. You can now chat.",
         });
 
+        // Track upload success
+        trackEvent({
+          name: "upload_success",
+          properties: {
+            fileName: file.name,
+            fileSize: file.size,
+            sessionId: data.sessionId,
+          },
+        });
+
         const newPdf: StoredPdf = {
           sessionId: data.sessionId,
           fileName: file.name,
@@ -145,6 +164,17 @@ export default function LeftPanel({
         setUploadError(message);
         toast.error("Processing failed", { description: message });
         setSelectedFile(null);
+
+        // Track upload failure
+        trackEvent({
+          name: "upload_failed",
+          properties: {
+            fileName: file.name,
+            fileSize: file.size,
+            error: message,
+          },
+        });
+
         // move focus to status for screen reader users
         setTimeout(() => statusRef.current?.focus(), 50);
       }
@@ -185,6 +215,15 @@ export default function LeftPanel({
     }
   };
 
+  // Handle sample PDF selection with tracking
+  const handleSampleClick = () => {
+    trackEvent({
+      name: "sample_pdf_selected",
+      properties: { sessionId: SAMPLE_SESSION_ID },
+    });
+    onSelectPdf(SAMPLE_SESSION_ID);
+  };
+
   return (
     <aside
       // mobile-first: full width and top by being order-first; on sm+ screens we let parent control ordering
@@ -212,7 +251,7 @@ export default function LeftPanel({
         <div className="mb-2">
           <button
             type="button"
-            onClick={() => onSelectPdf(SAMPLE_SESSION_ID)}
+            onClick={handleSampleClick}
             className={cn(
               "w-full flex items-center gap-3 rounded-md px-3 py-2 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-600",
               currentSessionId === SAMPLE_SESSION_ID

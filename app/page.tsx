@@ -6,7 +6,7 @@ import { X, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 
-const SAMPLE_SESSION_ID = process.env.NEXT_PUBLIC_SAMPLE_SESSION_ID || null;
+const SAMPLE_SESSION_ID = process.env.NEXT_PUBLIC_SAMPLE_SESSION_ID! || null;
 
 export default function Home() {
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(SAMPLE_SESSION_ID);

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
 import { Toaster } from "@/components/ui/sonner";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tanveer-docuchat-ai.vercel.app"),
@@ -64,6 +65,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Script
+  defer
+  data-domain="https://tanveer-docuchat-ai.vercel.app/"
+  src="https://getanalyzr.vercel.app/tracking-script.js"
+/>
       <body
         className={`antialiased`}
       >
