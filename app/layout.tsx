@@ -47,9 +47,7 @@ export const metadata: Metadata = {
     title: "DocuChat AI",
     description:
       "RAG-powered PDF chat application with semantic search and streaming AI responses.",
-    images: [
-      "https://tanveer-docuchat-ai.vercel.app/opengraph-image.png",
-    ],
+    images: ["https://tanveer-docuchat-ai.vercel.app/opengraph-image.png"],
   },
 
   robots: {
@@ -66,13 +64,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <Script
-  defer
-  data-domain="https://tanveer-docuchat-ai.vercel.app/"
-  src="https://getanalyzr.vercel.app/tracking-script.js"
-/>
-      <body
-        className={`antialiased`}
-      >
+        defer
+        data-domain="tanveer-docuchat-ai.vercel.app"
+        src="https://getanalyzr.vercel.app/tracking-script.js"
+      />
+      <body className={`antialiased`}>
         {children}
         <Toaster />
         <Analytics />
